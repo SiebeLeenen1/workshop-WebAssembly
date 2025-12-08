@@ -11,8 +11,8 @@
     "build:demo": "emcc ./demo/demo.c -O3 -s \"EXPORTED_FUNCTIONS=['_edge_detection','_malloc','_free']\" -o ./demo/demo.js",
     "build:sepia": "emcc ./sepia-filter/sepia.c -O3 -s \"EXPORTED_FUNCTIONS=['_sepia_filter','_malloc','_free']\" -o ./sepia-filter/sepia.js",
     "build:pixelate": "emcc ./pixelation/pixelate.c -O3 -s \"EXPORTED_FUNCTIONS=['_pixelate','_malloc','_free']\" -o ./pixelation/pixelate.js",
-    "build:all": "npm run build:hello && npm run build:add && npm run build:benchmark && npm run build:reverse && npm run build:demo && npm run build:sepia && npm run build:pixelate",
-    "serve:hello": "npx http-server ./exercises/01_hello_c -p 8081",
+    "build:huffman": "emcc ./huffman-compression/huffman.c -O3 -s \"EXPORTED_FUNCTIONS=['_compress','_decompress','_calculateCompressionRatio','_malloc','_free']\" -o ./huffman-compression/huffman.js",
+    "build:all": "npm run build:hello && npm run build:add && npm run build:benchmark && npm run build:reverse && npm run build:demo && npm run build:sepia && npm run build:pixelate && npm run build:huffman",    "serve:hello": "npx http-server ./exercises/01_hello_c -p 8081",
     "serve:math": "npx http-server ./exercises/02_math_functions -p 8081",
     "serve:benchmark": "npx http-server ./exercises/03_js_vs_wasm_benchmark -p 8081",
     "serve:reverse": "npx http-server ./exercises/04_reverse_string -p 8081",
@@ -21,6 +21,7 @@
     "serve:pixelate": "npx http-server ./pixelation -p 8081",
     "serve:edge-js": "npx http-server ./edge-detection-js -p 8081",
     "serve:edge-comparison": "npx http-server ./edge-comparison -p 8081",
+    "serve:huffman": "npx http-server ./huffman-compression -p 8081",
     "clean": "rimraf ./exercises/*/*.html ./exercises/*/*.js ./exercises/*/*.wasm"
   },
   "devDependencies": {

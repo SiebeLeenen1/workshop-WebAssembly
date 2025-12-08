@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huffman Compression - WebAssembly Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #16a085;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .input-section {
+            margin-bottom: 30px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #16a085;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        .button-group {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            padding: 12px 30px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .compress-btn {
+            background-color: #16a085;
+            color: white;
+        }
+        .compress-btn:hover {
+            background-color: #138d75;
+        }
+        .decompress-btn {
+            background-color: #e67e22;
+            color: white;
+        }
+        .decompress-btn:hover {
+            background-color: #d35400;
+        }
+        .clear-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .clear-btn:hover {
+            background-color: #7f8c8d;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-card.original {
+            background-color: #d5f4e6;
+            border-left: 4px solid #16a085;
+        }
+        .stat-card.compressed {
+            background-color: #fdebd0;
+            border-left: 4px solid #e67e22;
+        }
+        .stat-card.ratio {
+            background-color: #ebf5fb;
+            border-left: 4px solid #3498db;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .output-section {
+            margin-top: 30px;
+        }
+        .hex-display {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #bdc3c7;
+        }
+        .info {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #d5f4e6;
+            border-radius: 5px;
+            border-left: 4px solid #16a085;
+        }
+        h3 {
+            color: #16a085;
+            margin-top: 20px;
+        }
+        .badge {
+            display: inline-block;
+            background-color: #16a085;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗜️ RLE Compression Demo <span class="badge">WASM</span></h1>
+        
+        <div class="input-section">
+            <h3>Input Text</h3>
+            <textarea id="inputText" placeholder="Enter text to compress... Works best with repeated characters like 'aaaaaabbbbcccc'">aaaaaabbbbbbccccccddddddddeeeeeeeeeefffffffffff</textarea>
+        </div>
+
+        <div class="button-group">
+            <button class="compress-btn" id="compressBtn">Compress</button>
+            <button class="decompress-btn" id="decompressBtn">Decompress</button>
+            <button class="clear-btn" id="clearBtn">Clear</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card original">
+                <div class="stat-label">Original Size</div>
+                <div class="stat-value" id="originalSize">0 bytes</div>
+            </div>
+            <div class="stat-card compressed">
+                <div class="stat-label">Compressed Size</div>
+                <div class="stat-value" id="compressedSize">0 bytes</div>
+            </div>
+            <div class="stat-card ratio">
+                <div class="stat-label">Compression Ratio</div>
+                <div class="stat-value" id="compressionRatio">0%</div>
+            </div>
+        </div>
+
+        <div class="output-section">
+            <h3>Compressed Data (Hex)</h3>
+            <div class="hex-display" id="compressedHex">No data compressed yet...</div>
+        </div>
+
+        <div class="output-section">
+            <h3>Decompressed Text</h3>
+            <textarea id="outputText" readonly placeholder="Decompressed text will appear here..."></textarea>
+        </div>
+
+        <div class="info">
+            <p id="status">Ready to compress data using RLE (Run-Length Encoding) algorithm...</p>
+        </div>
+    </div>
+
+    <script>
+        var Module = {
+            onRuntimeInitialized: function() {
+                console.log('WebAssembly module loaded and ready!');
+                document.getElementById('status').textContent = 'Ready to compress data using RLE (Run-Length Encoding) algorithm...';
+            }
+        };
+    </script>
+    <script src="huffman.js"></script>
+    <script>
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const compressBtn = document.getElementById('compressBtn');
+        const decompressBtn = document.getElementById('decompressBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const statusText = document.getElementById('status');
+        const originalSizeText = document.getElementById('originalSize');
+        const compressedSizeText = document.getElementById('compressedSize');
+        const compressionRatioText = document.getElementById('compressionRatio');
+        const compressedHexDisplay = document.getElementById('compressedHex');
+
+        let compressedData = null;
+
+        function bytesToHex(bytes) {
+            return Array.from(bytes)
+                .map(byte => byte.toString(16).padStart(2, '0'))
+                .join(' ');
+        }
+
+        compressBtn.addEventListener('click', function() {
+            if (typeof Module._compress === 'undefined') {
+                statusText.textContent = '⚠️ WebAssembly module not loaded yet. Please wait...';
+                return;
+            }
+
+            const text = inputText.value;
+            if (!text) {
+                statusText.textContent = '⚠️ Please enter some text to compress!';
+                return;
+            }
+
+            try {
+                statusText.textContent = 'Compressing...';
+                console.log('Starting compression...');
+
+                // Convert text to bytes
+                const encoder = new TextEncoder();
+                const inputBytes = encoder.encode(text);
+                const inputSize = inputBytes.length;
+                console.log('Input size:', inputSize);
+
+                // Allocate memory for input
+                const inputPtr = Module._malloc(inputSize);
+                console.log('Input pointer:', inputPtr);
+                HEAPU8.set(inputBytes, inputPtr);
+
+                // Allocate memory for output (worst case: same size + overhead)
+                const maxOutputSize = inputSize * 2 + 1024;
+                const outputPtr = Module._malloc(maxOutputSize);
+                console.log('Output pointer:', outputPtr, 'max size:', maxOutputSize);
+
+                // Compress
+                console.log('Calling compress function...');
+                const compressedSize = Module._compress(inputPtr, inputSize, outputPtr, maxOutputSize);
+                console.log('Compressed size:', compressedSize);
+
+                // Copy compressed data
+                compressedData = HEAPU8.slice(outputPtr, outputPtr + compressedSize);
+                console.log('Copied compressed data');
+
+                // Free memory
+                Module._free(inputPtr);
+                Module._free(outputPtr);
+                console.log('Freed memory');
+
+                // Calculate compression ratio
+                const ratio = Module._calculateCompressionRatio(inputSize, compressedSize);
+                console.log('Compression ratio:', ratio);
+
+                // Update UI
+                originalSizeText.textContent = `${inputSize} bytes`;
+                compressedSizeText.textContent = `${compressedSize} bytes`;
+                compressionRatioText.textContent = `${ratio.toFixed(1)}%`;
+                compressedHexDisplay.textContent = bytesToHex(compressedData);
+                outputText.value = '';
+
+                const savings = ((1 - ratio / 100) * 100).toFixed(1);
+                statusText.textContent = `✓ Compression complete! Saved ${savings}% space.`;
+                console.log('Compression complete!');
+            } catch (error) {
+                statusText.textContent = `❌ Error: ${error.message}`;
+                console.error('Compression error:', error);
+            }
+        });
+
+        decompressBtn.addEventListener('click', function() {
+            if (typeof Module._decompress === 'undefined') {
+                statusText.textContent = '⚠️ WebAssembly module not loaded yet. Please wait...';
+                return;
+            }
+
+            if (!compressedData) {
+                statusText.textContent = '⚠️ Please compress some data first!';
+                return;
+            }
+
+            try {
+                statusText.textContent = 'Decompressing...';
+
+                // Allocate memory for compressed data
+                const compressedSize = compressedData.length;
+                const inputPtr = Module._malloc(compressedSize);
+                HEAPU8.set(compressedData, inputPtr);
+
+                // Allocate memory for output
+                const maxOutputSize = 1024 * 1024; // 1MB max
+                const outputPtr = Module._malloc(maxOutputSize);
+
+                // Decompress
+                const decompressedSize = Module._decompress(inputPtr, compressedSize, outputPtr, maxOutputSize);
+
+                // Copy decompressed data
+                const decompressedBytes = HEAPU8.slice(outputPtr, outputPtr + decompressedSize);
+
+                // Free memory
+                Module._free(inputPtr);
+                Module._free(outputPtr);
+
+                // Convert bytes to text
+                const decoder = new TextDecoder();
+                const decompressedText = decoder.decode(decompressedBytes);
+
+                // Update UI
+                outputText.value = decompressedText;
+                statusText.textContent = '✓ Decompression complete! Verify the text matches the original.';
+            } catch (error) {
+                statusText.textContent = `❌ Error: ${error.message}`;
+                console.error('Decompression error:', error);
+            }
+        });
+
+        clearBtn.addEventListener('click', function() {
+            inputText.value = '';
+            outputText.value = '';
+            compressedData = null;
+            originalSizeText.textContent = '0 bytes';
+            compressedSizeText.textContent = '0 bytes';
+            compressionRatioText.textContent = '0%';
+            compressedHexDisplay.textContent = 'No data compressed yet...';
+            statusText.textContent = 'Ready to compress data using Huffman algorithm...';
+        });
+    </script>
+</body>
+</html>
