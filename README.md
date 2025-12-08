@@ -1,2 +1,43 @@
 # workshop-WebAssembly
 Workshop voor IT-Tools
+# Van C naar WebAssembly – IT Tools 2 Workshop
+
+## Vereisten
+Maak een nieuwe map aan in C:/user/documenten met naam emsdk en clone deze repo:
+git clone https://github.com/emscripten-core/emsdk.git
+Installeer dit vooraf:
+```bash
+cd emsdk
+emsdk install latest
+emsdk activate latest
+emsdk_env.sh
+```
+
+Controleer met:
+```bash
+emcc -v
+```
+
+---
+
+## Overzicht van oefeningen
+| Map | Beschrijving |
+|------|---------------|
+| 01_hello_c | Compileer & voer je eerste C‑code uit in de browser |
+| 02_math_function | Exporteer & roep een gecompileerde C‑functie aan vanuit JS |
+| 03_js_vs_wasm_benchmark | Vergelijk de snelheid van JavaScript en WebAssembly |
+| 04_reverse_string | Manipuleer strings met lineair geheugen |
+| 05 Demo | Foto manipulatie met pixelation, sepia en edge detection |
+
+## Benchmark‑doel
+Deelnemers meten de uitvoeringstijd van een grote berekening, zowel in JS als in gecompileerde C (Wasm).  
+We gebruiken `performance.now()` om de tijden te vergelijken.
+
+---
+
+## 🚀 Na de Workshop
+- Experimenteer met optimalisatie‑vlaggen zoals `-O3` of `-Oz`  
+- Ontdek Rust → Wasm  
+- Probeer WASI voor uitvoering buiten de browser  
+
+© IT‑Tools‑2 Workshop 2025
