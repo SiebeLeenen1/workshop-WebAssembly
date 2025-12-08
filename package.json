@@ -1,0 +1,30 @@
+{
+  "name": "wasm-workshop",
+  "version": "1.0.0",
+  "description": "WebAssembly + C workshop",
+  "scripts": {
+    "env": "cd ../emsdk && . ./emsdk_env.sh", 
+    "build:hello": "emcc ./exercises/01_hello_c/hello.c -O3 -o ./exercises/01_hello_c/hello.html",
+    "build:add": "emcc ./exercises/02_add_function/math.c -O3 -s \"EXPORTED_FUNCTIONS=['_add','_subtract','_multiply','_divide']\" -o ./exercises/02_add_function/math.js",
+    "build:benchmark": "emcc ./exercises/03_js_vs_wasm_benchmark/loop.c -O3 -s \"EXPORTED_FUNCTIONS=['_heavy_sum']\" -o ./exercises/03_js_vs_wasm_benchmark/loop.js",
+    "build:reverse": "emcc ./exercises/04_reverse_string/reverse.c -O3 -s \"EXPORTED_FUNCTIONS=['_reverse','_malloc','_free']\" -s \"EXPORTED_RUNTIME_METHODS=['UTF8ToString','stringToUTF8','lengthBytesUTF8']\" -s MODULARIZE=0 -o ./exercises/04_reverse_string/reverse.js",
+    "build:demo": "emcc ./demo/demo.c -O3 -s \"EXPORTED_FUNCTIONS=['_edge_detection','_malloc','_free']\" -o ./demo/demo.js",
+    "build:sepia": "emcc ./sepia-filter/sepia.c -O3 -s \"EXPORTED_FUNCTIONS=['_sepia_filter','_malloc','_free']\" -o ./sepia-filter/sepia.js",
+    "build:pixelate": "emcc ./pixelation/pixelate.c -O3 -s \"EXPORTED_FUNCTIONS=['_pixelate','_malloc','_free']\" -o ./pixelation/pixelate.js",
+    "build:all": "npm run build:hello && npm run build:add && npm run build:benchmark && npm run build:reverse && npm run build:demo && npm run build:sepia && npm run build:pixelate",
+    "serve:hello": "npx http-server ./exercises/01_hello_c -p 8081",
+    "serve:add": "npx http-server ./exercises/02_add_function -p 8081",
+    "serve:benchmark": "npx http-server ./exercises/03_js_vs_wasm_benchmark -p 8081",
+    "serve:reverse": "npx http-server ./exercises/04_reverse_string -p 8081",
+    "serve:demo": "npx http-server ./demo -p 8081",
+    "serve:sepia": "npx http-server ./sepia-filter -p 8081",
+    "serve:pixelate": "npx http-server ./pixelation -p 8081",
+    "serve:edge-js": "npx http-server ./edge-detection-js -p 8081",
+    "serve:edge-comparison": "npx http-server ./edge-comparison -p 8081",
+    "clean": "rimraf ./exercises/*/*.html ./exercises/*/*.js ./exercises/*/*.wasm"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "rimraf": "^6.0.1"
+  }
+}

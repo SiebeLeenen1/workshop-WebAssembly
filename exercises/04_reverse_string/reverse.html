@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse a String</title>
+  </head>
+  <body>
+    <h1>Reverse a String</h1>
+    <label for="txt">Input: <input id="txt" value="WebAssembly!" /></label>
+    <button id="btn">Reverse</button>
+    <p id="out"></p>
+    <script>
+      var Module = {
+        onRuntimeInitialized: function() {
+          console.log("WebAssembly module loaded!");
+          
+          document.getElementById("btn").onclick = () => {
+            try {
+              const input = document.getElementById("txt").value;
+              console.log("Input:", input);
+              
+              // Manual UTF-8 encoding using TextEncoder
+              const encoder = new TextEncoder();
+              const inputBytes = encoder.encode(input + '\0');
+              
+              // Allocate memory and copy the string
+              const inputPtr = Module._malloc(inputBytes.length);
+              HEAPU8.set(inputBytes, inputPtr);
+              
+              // Call the C function
+              const resultPtr = Module._reverse(inputPtr);
+              
+              // Read the result back using TextDecoder
+              const decoder = new TextDecoder();
+              let endPtr = resultPtr;
+              while (HEAPU8[endPtr] !== 0) endPtr++;
+              const resultBytes = HEAPU8.slice(resultPtr, endPtr);
+              const result = decoder.decode(resultBytes);
+              
+              console.log("Result:", result);
+              document.getElementById("out").textContent = `Result: ${result}`;
+              
+              // Free allocated memory
+              Module._free(inputPtr);
+              Module._free(resultPtr);
+            } catch (error) {
+              console.error("Error:", error);
+              alert("Error: " + error.message);
+            }
+          };
+        }
+      };
+    </script>
+    <script src="reverse.js"></script>
+  </body>
+</html>
