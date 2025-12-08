@@ -30,7 +30,14 @@ Controleer met:
 ```bash
 emcc -v
 ```
-
+In de map workshop_WebAssembly
+```bash
+npm install
+```
+Controleer met:
+```bash
+npm -v
+```
 ---
 
 ## Overzicht van oefeningen
