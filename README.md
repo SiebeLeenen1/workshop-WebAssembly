@@ -26,6 +26,12 @@ emsdk activate latest
 emsdk_env.sh
 ```
 
+Activeer Emscripten in je huidige terminal sessie:
+```bash
+.\emsdk_env.ps1
+```
+
+
 Controleer met:
 ```bash
 emcc -v
