@@ -6,4 +6,5 @@ EMSCRIPTEN_KEEPALIVE
 char* reverse(const char* str) {
     //TODO: implementeer nu de reverse functie
     //Hint: gebruik strlen om de lengte van de string te bepalen
+    return NULL;
 }

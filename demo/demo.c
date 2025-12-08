@@ -4,5 +4,4 @@
 
 EMSCRIPTEN_KEEPALIVE
 void edge_detection(unsigned char* imageData, int width, int height) {
-   
 }
