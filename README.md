@@ -2,6 +2,19 @@
 Workshop voor IT-Tools
 # Van C naar WebAssembly – IT Tools 2 Workshop
 
+**Duur:** 2 uur  
+**Niveau:** Beginner → Gemiddeld  
+**Doel:** Begrijp en ervaar de kracht van WebAssembly via C.
+
+---
+
+## 📋 Leerdoelen
+- Compileer C‑code naar WebAssembly (Wasm)  
+- Voer `.wasm` uit en communiceer ermee vanuit JavaScript  
+- **Vergelijk prestaties van Wasm vs JavaScript**  
+- Verwerk tekst en beheer geheugenuitwisseling tussen JS en C  
+
+---
 ## Vereisten
 Maak een nieuwe map aan in C:/user/documenten met naam emsdk en clone deze repo:
 git clone https://github.com/emscripten-core/emsdk.git
