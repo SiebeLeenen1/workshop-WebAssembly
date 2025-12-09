@@ -36,6 +36,8 @@ Controleer met:
 ```bash
 emcc -v
 ```
+
+Als je de workshop repo nog niet hebt gecloned: https://github.com/SiebeLeenen1/workshop-WebAssembly.git
 In de map workshop_WebAssembly
 ```bash
 npm install
